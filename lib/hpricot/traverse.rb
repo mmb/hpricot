@@ -798,6 +798,24 @@ module Hpricot
       nil
     end
 
+    # +charset+ searches charset and return it as a text.
+    # It returns nil if not found.
+    #
+    # +charset+ searches following information.
+    #
+    # - <meta http-equiv="content-type" content="text/html; charset=UTF-8"> in HTML
+    def charset
+      traverse_element('meta',
+        '{http://www.w3.org/1999/xhtml}meta') {|e|
+        next if e['http-equiv'].nil? or
+          e['http-equiv'].downcase != 'content-type' or e['content'].nil?
+        match = e['content'].match(/charset=([\w_.:-]+)/)
+        return match[1] unless match.nil?
+      }
+
+      nil
+    end
+
   end
 
   module Doc::Trav
